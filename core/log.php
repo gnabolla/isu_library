@@ -47,5 +47,44 @@ class Log {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+    public function getFilteredLogs($filters) {
+        $sql = "SELECT l.*, s.firstname, s.lastname, s.course as program, s.department, s.rfid 
+                FROM logs l 
+                JOIN students s ON l.student_id = s.id 
+                WHERE DATE(l.timestamp) BETWEEN :date_from AND :date_to";
+        
+        $params = [
+            'date_from' => $filters['date_from'],
+            'date_to' => $filters['date_to']
+        ];
+
+        if (!empty($filters['program'])) {
+            $sql .= " AND s.course = :program";
+            $params['program'] = $filters['program'];
+        }
+
+        if (!empty($filters['department'])) {
+            $sql .= " AND s.department = :department";
+            $params['department'] = $filters['department'];
+        }
+
+        $sql .= " ORDER BY l.timestamp DESC";
+        
+        $stmt = $this->db->query($sql, $params);
+        return $stmt->fetchAll();
+    }
+
+    public function getUniquePrograms() {
+        $sql = "SELECT DISTINCT course as program FROM students ORDER BY course";
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll();
+    }
+
+    public function getUniqueDepartments() {
+        $sql = "SELECT DISTINCT department FROM students ORDER BY department";
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll();
+    }
 }
 ?>

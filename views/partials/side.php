@@ -14,5 +14,8 @@
         <li>
             <a href="<?= BASE_PATH ?>/rfid"><i class="fas fa-qrcode"></i> RFID Scan</a>
         </li>
+        <li>
+            <a href="<?= BASE_PATH ?>/logs"><i class="fas fa-history"></i> RFID Logs</a>
+        </li>
     </ul>
 </nav>

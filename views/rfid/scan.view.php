@@ -13,6 +13,11 @@
 
         <!-- Feedback Messages -->
         <div id="feedback" class="mt-3"></div>
+        
+        <!-- Student Image Container -->
+        <div id="studentImageContainer" class="mt-3 text-center" style="display: none;">
+            <img id="studentImage" class="img-fluid" style="max-height: 300px;" alt="Student Photo">
+        </div>
     </div>
 </div>
 
@@ -21,6 +26,9 @@
         const rfidForm = document.getElementById('rfid-form');
         const rfidInput = document.getElementById('rfid');
         const feedbackDiv = document.getElementById('feedback');
+        const imageContainer = document.getElementById('studentImageContainer');
+        const studentImage = document.getElementById('studentImage');
+        let imageTimer = null;
 
         rfidForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -50,6 +58,24 @@
                                 <strong>Student:</strong> ${escapeHtml(data.student.firstname)} ${escapeHtml(data.student.lastname)}
                             </div>
                         `;
+                        
+                        // Display student image
+                        if (data.student.image) {
+                            // Clear existing timer if it exists
+                            if (imageTimer) {
+                                clearTimeout(imageTimer);
+                            }
+                            
+                            // Show the image
+                            studentImage.src = data.student.image;
+                            imageContainer.style.display = 'block';
+                            
+                            // Set new timer to hide the image after 5 seconds
+                            imageTimer = setTimeout(() => {
+                                imageContainer.style.display = 'none';
+                                studentImage.src = '';
+                            }, 5000);
+                        }
                     }
                 } else {
                     displayFeedback(data.message, 'danger');

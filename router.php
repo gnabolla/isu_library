@@ -27,7 +27,8 @@ $protected_routes = [
     "/files" => "files_template.php",
     "/allfiles" => "files.php",
     "/students" => "controllers/students.php", // Add this line
-    "/rfid" => "controllers/rfid.php" // Add this line
+    "/rfid" => "controllers/rfid.php", // Add this line
+    "/logs" => "controllers/logs.php" // Add this line
 ];
 
 // Define public routes
