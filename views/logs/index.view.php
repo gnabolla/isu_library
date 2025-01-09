@@ -1,6 +1,9 @@
 <!-- views/logs/index.view.php -->
 <div class="container mt-4">
     <h2>RFID Logs</h2>
+
+    <!-- Button to view/print logs summary -->
+    <a href="<?= BASE_PATH ?>/logs/summary" class="btn btn-secondary mb-3">Print Summary</a>
     
     <!-- Filters -->
     <div class="card mb-4">

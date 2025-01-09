@@ -1,5 +1,5 @@
 <?php
-// router.php
+// router.php (Core)
 
 require_once "core/Auth.php";
 require_once "core/Middleware.php";
@@ -26,9 +26,12 @@ $protected_routes = [
     "/" => "controllers/index.php",
     "/files" => "files_template.php",
     "/allfiles" => "files.php",
-    "/students" => "controllers/students.php", // Add this line
-    "/rfid" => "controllers/rfid.php", // Add this line
-    "/logs" => "controllers/logs.php" // Add this line
+    "/students" => "controllers/students.php",
+    "/rfid" => "controllers/rfid.php",
+    "/logs" => "controllers/logs.php",
+    // Added route for logs summary printing
+    "/logs/summary" => "controllers/logs_summary.php",
+    "/logs/summary-print" => "controllers/logs_summary_print.php",
 ];
 
 // Define public routes

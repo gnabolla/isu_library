@@ -11,10 +11,8 @@
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
 
-        <!-- Feedback Messages -->
         <div id="feedback" class="mt-3"></div>
         
-        <!-- Student Image Container -->
         <div id="studentImageContainer" class="mt-3 text-center" style="display: none;">
             <img id="studentImage" class="img-fluid" style="max-height: 300px;" alt="Student Photo">
         </div>
@@ -22,97 +20,78 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const rfidForm = document.getElementById('rfid-form');
-        const rfidInput = document.getElementById('rfid');
-        const feedbackDiv = document.getElementById('feedback');
-        const imageContainer = document.getElementById('studentImageContainer');
-        const studentImage = document.getElementById('studentImage');
-        let imageTimer = null;
+document.addEventListener('DOMContentLoaded', function() {
+    const rfidForm = document.getElementById('rfid-form');
+    const rfidInput = document.getElementById('rfid');
+    const feedbackDiv = document.getElementById('feedback');
+    const imageContainer = document.getElementById('studentImageContainer');
+    const studentImage = document.getElementById('studentImage');
+    let imageTimer = null;
 
-        rfidForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const rfid = rfidInput.value.trim();
-
-            if (rfid === '') {
-                displayFeedback('Please scan an RFID.', 'danger');
-                return;
-            }
-
-            // Send RFID via AJAX
-            fetch('<?= BASE_PATH ?>/rfid', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `rfid=${encodeURIComponent(rfid)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    displayFeedback(data.message, 'success');
-                    // Optionally, display student info
-                    if (data.student) {
-                        feedbackDiv.innerHTML += `
-                            <div class="mt-2">
-                                <strong>Student:</strong> ${escapeHtml(data.student.firstname)} ${escapeHtml(data.student.lastname)}
-                            </div>
-                        `;
-                        
-                        // Display student image
-                        if (data.student.image) {
-                            // Clear existing timer if it exists
-                            if (imageTimer) {
-                                clearTimeout(imageTimer);
-                            }
-                            
-                            // Show the image
-                            studentImage.src = data.student.image;
-                            imageContainer.style.display = 'block';
-                            
-                            // Set new timer to hide the image after 5 seconds
-                            imageTimer = setTimeout(() => {
-                                imageContainer.style.display = 'none';
-                                studentImage.src = '';
-                            }, 5000);
-                        }
-                    }
-                } else {
-                    displayFeedback(data.message, 'danger');
-                }
-                // Clear the input
-                rfidInput.value = '';
-                // Refocus the input
-                rfidInput.focus();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                displayFeedback('An error occurred. Please try again.', 'danger');
-            });
-        });
-
-        // Function to display feedback messages
-        function displayFeedback(message, type) {
-            feedbackDiv.innerHTML = `<div class="alert alert-${type}" role="alert">${escapeHtml(message)}</div>`;
+    rfidForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const rfid = rfidInput.value.trim();
+        if (rfid === '') {
+            displayFeedback('Please scan an RFID.', 'danger');
+            return;
         }
 
-        // Function to escape HTML to prevent XSS
-        function escapeHtml(text) {
-            var map = {
+        fetch('<?= BASE_PATH ?>/rfid', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `rfid=${encodeURIComponent(rfid)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                displayFeedback(data.message, 'success');
+                if (data.student) {
+                    feedbackDiv.innerHTML += `
+                        <div class="mt-2">
+                            <strong>Student:</strong> ${escapeHtml(data.student.firstname)} ${escapeHtml(data.student.lastname)}
+                        </div>
+                    `;
+                    if (data.student.image) {
+                        if (imageTimer) clearTimeout(imageTimer);
+                        studentImage.src = data.student.image;
+                        imageContainer.style.display = 'block';
+                        imageTimer = setTimeout(() => {
+                            imageContainer.style.display = 'none';
+                            studentImage.src = '';
+                        }, 5000);
+                    }
+                }
+            } else {
+                displayFeedback(data.message, 'danger');
+            }
+            rfidInput.value = '';
+            rfidInput.focus();
+        })
+        .catch(() => {
+            displayFeedback('An error occurred. Please try again.', 'danger');
+        });
+    });
+
+    function displayFeedback(message, type) {
+        feedbackDiv.innerHTML = `<div class="alert alert-${type}" role="alert">${escapeHtml(message)}</div>`;
+    }
+
+    function escapeHtml(text) {
+        return text.replace(/[&<>"']/g, function(m) {
+            return ({
                 '&': '&amp;',
                 '<': '&lt;',
                 '>': '&gt;',
                 '"': '&quot;',
                 "'": '&#039;'
-            };
-            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-        }
-
-        // Optional: Auto-submit when RFID is scanned and Enter key is pressed
-        rfidInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                rfidForm.dispatchEvent(new Event('submit'));
-            }
+            })[m];
         });
+    }
+
+    rfidInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            rfidForm.dispatchEvent(new Event('submit'));
+        }
     });
+});
 </script>
