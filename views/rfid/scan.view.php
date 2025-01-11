@@ -13,26 +13,39 @@
 
         <div id="feedback" class="mt-3"></div>
         
-        <div id="studentImageContainer" class="mt-3 text-center" style="display: none;">
-            <img id="studentImage" class="img-fluid" style="max-height: 300px;" alt="Student Photo">
+        <div id="studentInfo" class="mt-3" style="display: none;">
+            <div class="text-center">
+                <img id="studentImage" class="img-fluid" style="max-height: 250px;" alt="Student Photo">
+            </div>
+            <div class="mt-3">
+                <h4 id="studentName"></h4>
+                <p id="studentDepartment" class="mb-1"></p>
+                <p id="logType" class="fw-bold"></p>
+                <!-- Display date/time -->
+                <p id="scanTime" class="text-muted"></p>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const rfidForm = document.getElementById('rfid-form');
-    const rfidInput = document.getElementById('rfid');
-    const feedbackDiv = document.getElementById('feedback');
-    const imageContainer = document.getElementById('studentImageContainer');
-    const studentImage = document.getElementById('studentImage');
-    let imageTimer = null;
+    const rfidForm       = document.getElementById('rfid-form');
+    const rfidInput      = document.getElementById('rfid');
+    const feedbackDiv    = document.getElementById('feedback');
+    const studentInfoDiv = document.getElementById('studentInfo');
+    const studentImage   = document.getElementById('studentImage');
+    const studentName    = document.getElementById('studentName');
+    const studentDept    = document.getElementById('studentDepartment');
+    const logType        = document.getElementById('logType');
+    const scanTime       = document.getElementById('scanTime');
+    let imageTimer       = null;
 
     rfidForm.addEventListener('submit', function(e) {
         e.preventDefault();
         const rfid = rfidInput.value.trim();
-        if (rfid === '') {
-            displayFeedback('Please scan an RFID.', 'danger');
+        if (!rfid) {
+            displayFeedback('RFID is required.', 'danger');
             return;
         }
 
@@ -46,19 +59,37 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.status === 'success') {
                 displayFeedback(data.message, 'success');
                 if (data.student) {
-                    feedbackDiv.innerHTML += `
-                        <div class="mt-2">
-                            <strong>Student:</strong> ${escapeHtml(data.student.firstname)} ${escapeHtml(data.student.lastname)}
-                        </div>
-                    `;
+                    studentName.textContent = data.student.firstname + ' ' + data.student.lastname;
+                    studentDept.textContent = data.student.department;
+                    logType.textContent     = (data.log_type === 'in') 
+                        ? 'You have successfully TIMED IN.'
+                        : 'You have successfully TIMED OUT.';
+
+                    // Display server-generated date_time
+                    if (data.date_time) {
+                        scanTime.textContent = 'Date & Time: ' + data.date_time;
+                    } else {
+                        scanTime.textContent = '';
+                    }
+
                     if (data.student.image) {
                         if (imageTimer) clearTimeout(imageTimer);
                         studentImage.src = data.student.image;
-                        imageContainer.style.display = 'block';
+                        studentImage.alt = data.student.firstname + ' ' + data.student.lastname;
+                        studentInfoDiv.style.display = 'block';
+                        // Change display timer to 10 seconds
                         imageTimer = setTimeout(() => {
-                            imageContainer.style.display = 'none';
+                            studentInfoDiv.style.display = 'none';
                             studentImage.src = '';
-                        }, 5000);
+                        }, 10000);
+                    } else {
+                        studentImage.src = '';
+                        studentInfoDiv.style.display = 'block';
+                        // Also hide after 10 seconds if no image
+                        if (imageTimer) clearTimeout(imageTimer);
+                        imageTimer = setTimeout(() => {
+                            studentInfoDiv.style.display = 'none';
+                        }, 10000);
                     }
                 }
             } else {
@@ -87,11 +118,5 @@ document.addEventListener('DOMContentLoaded', function() {
             })[m];
         });
     }
-
-    rfidInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            rfidForm.dispatchEvent(new Event('submit'));
-        }
-    });
 });
 </script>

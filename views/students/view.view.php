@@ -7,7 +7,8 @@
     <div class="card">
         <div class="card-body">
             <?php if ($student['image'] && file_exists($student['image'])): ?>
-                <img src="<?= BASE_PATH ?>/<?= htmlspecialchars($student['image']) ?>" alt="Student Image" class="img-thumbnail mb-3" width="150">
+                <img src="<?= BASE_PATH ?>/<?= htmlspecialchars($student['image']) ?>" 
+                     alt="Student Image" class="img-thumbnail mb-3" width="150">
             <?php else: ?>
                 <p>No Image Available</p>
             <?php endif; ?>
@@ -58,6 +59,33 @@
                     <td><?= htmlspecialchars($student['updated_at']) ?></td>
                 </tr>
             </table>
+        </div>
+    </div>
+
+    <!-- NEW: Student Logs Section -->
+    <div class="card mt-4">
+        <div class="card-body">
+            <h3>Logs</h3>
+            <?php if (!empty($studentLogs)): ?>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Log Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($studentLogs as $log): ?>
+                            <tr>
+                                <td><?= date('Y-m-d H:i:s', strtotime($log['timestamp'])) ?></td>
+                                <td><?= htmlspecialchars(ucfirst($log['type'])) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <p>No logs found for this student.</p>
+            <?php endif; ?>
         </div>
     </div>
 </div>

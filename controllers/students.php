@@ -3,9 +3,11 @@
 
 use Core\Middleware;
 use Core\Student;
+use Core\Log;
 
-// Include the Student class
+// Include the Student and Log classes
 require_once __DIR__ . '/../core/Student.php';
+require_once __DIR__ . '/../core/Log.php';
 
 // Ensure the user is authenticated
 Middleware::requireAuth();
@@ -13,6 +15,9 @@ Middleware::requireAuth();
 $config = require('config.php');
 $db = new Database($config['database']);
 $studentModel = new Student($db);
+
+// Also create a Log model instance (for fetching individual student logs)
+$logModel = new Log($db);
 
 $action = $_GET['action'] ?? 'index';
 $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
@@ -163,7 +168,7 @@ switch ($action) {
             // Handle error
             $errors[] = 'Failed to delete student: ' . $e->getMessage();
             $title = 'Error';
-            $view = 'views/404.php'; // Or create a specific error view
+            $view = 'views/404.php';
             require 'views/layout.view.php';
         }
         break;
@@ -177,6 +182,9 @@ switch ($action) {
         if (!$student) {
             abort(404);
         }
+
+        // NEW: Retrieve this student's logs
+        $studentLogs = $logModel->getLogsByStudentId($id);
 
         $title = 'View Student';
         $view = 'views/students/view.view.php';
@@ -194,7 +202,6 @@ switch ($action) {
             'department' => $_GET['department'] ?? '',
             'sex' => $_GET['sex'] ?? ''
         ];
-        // Remove empty filters
         $filters = array_filter($filters);
 
         $students = $studentModel->getAll($filters, $search);
@@ -204,4 +211,3 @@ switch ($action) {
         require 'views/layout.view.php';
         break;
 }
-?>

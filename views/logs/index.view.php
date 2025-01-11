@@ -11,11 +11,13 @@
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Date From</label>
-                    <input type="date" name="date_from" class="form-control" value="<?= htmlspecialchars($filters['date_from']) ?>">
+                    <input type="date" name="date_from" class="form-control" 
+                           value="<?= htmlspecialchars($filters['date_from']) ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Date To</label>
-                    <input type="date" name="date_to" class="form-control" value="<?= htmlspecialchars($filters['date_to']) ?>">
+                    <input type="date" name="date_to" class="form-control" 
+                           value="<?= htmlspecialchars($filters['date_to']) ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Program</label>
@@ -65,6 +67,8 @@
                             <th>RFID</th>
                             <th>Program</th>
                             <th>Department</th>
+                            <!-- New column for Time In/Out -->
+                            <th>Time In/Out</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -75,6 +79,8 @@
                                 <td><?= htmlspecialchars($log['rfid']) ?></td>
                                 <td><?= htmlspecialchars($log['program']) ?></td>
                                 <td><?= htmlspecialchars($log['department']) ?></td>
+                                <!-- Display the "type" field (in/out) -->
+                                <td><?= htmlspecialchars(ucfirst($log['type'])) ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
