@@ -92,5 +92,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $title = 'RFID Scan Interface';
-$view = 'views/rfid/scan.view.php';
-require 'views/layout.view.php';
+// $view = 'views/rfid/scan.view.php';
+require 'views/rfid/scan.view.php';
