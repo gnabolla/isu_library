@@ -2,10 +2,8 @@
 <div class="container mt-4">
     <h2>RFID Logs</h2>
 
-    <!-- Button to view/print logs summary -->
     <a href="<?= BASE_PATH ?>/logs/summary" class="btn btn-secondary mb-3">Print Summary</a>
     
-    <!-- Filters -->
     <div class="card mb-4">
         <div class="card-body">
             <form method="GET" class="row g-3">
@@ -46,28 +44,35 @@
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary">Apply Filters</button>
                 </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <a href="<?= BASE_PATH ?>/logs/print?date_from=<?= urlencode($filters['date_from']) ?>&date_to=<?= urlencode($filters['date_to']) ?>&program=<?= urlencode($filters['program']) ?>&department=<?= urlencode($filters['department']) ?>"
+                       class="btn btn-secondary"
+                    >
+                       Print Filtered
+                    </a>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- Count Display -->
     <div class="alert alert-info">
-        Total Entries: <?= $count ?>
+        Total Entries: <?= $count ?><br>
+        Male: <?= $maleCount ?><br>
+        Female: <?= $femaleCount ?>
     </div>
 
-    <!-- Logs Table -->
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Date & Time</th>
+                            <th>Date &amp; Time</th>
                             <th>Student Name</th>
                             <th>RFID</th>
                             <th>Program</th>
                             <th>Department</th>
-                            <!-- New column for Time In/Out -->
                             <th>Time In/Out</th>
                         </tr>
                     </thead>
@@ -79,7 +84,6 @@
                                 <td><?= htmlspecialchars($log['rfid']) ?></td>
                                 <td><?= htmlspecialchars($log['program']) ?></td>
                                 <td><?= htmlspecialchars($log['department']) ?></td>
-                                <!-- Display the "type" field (in/out) -->
                                 <td><?= htmlspecialchars(ucfirst($log['type'])) ?></td>
                             </tr>
                         <?php endforeach; ?>

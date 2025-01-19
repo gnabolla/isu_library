@@ -15,7 +15,9 @@
                 <select name="year" class="form-select">
                     <option value="">All Years</option>
                     <?php for ($i = 1; $i <= 5; $i++): ?>
-                        <option value="<?= $i ?>" <?= (isset($filters['year']) && $filters['year'] == $i) ? 'selected' : '' ?>>Year <?= $i ?></option>
+                        <option value="<?= $i ?>" <?= (isset($filters['year']) && $filters['year'] == $i) ? 'selected' : '' ?>>
+                            Year <?= $i ?>
+                        </option>
                     <?php endfor; ?>
                 </select>
             </div>
@@ -31,9 +33,9 @@
             <div class="col-md-1">
                 <select name="sex" class="form-select">
                     <option value="">Sex</option>
-                    <option value="Male" <?= (isset($filters['sex']) && $filters['sex'] == 'Male') ? 'selected' : '' ?>>Male</option>
+                    <option value="Male"   <?= (isset($filters['sex']) && $filters['sex'] == 'Male')   ? 'selected' : '' ?>>Male</option>
                     <option value="Female" <?= (isset($filters['sex']) && $filters['sex'] == 'Female') ? 'selected' : '' ?>>Female</option>
-                    <option value="Other" <?= (isset($filters['sex']) && $filters['sex'] == 'Other') ? 'selected' : '' ?>>Other</option>
+                    <option value="Other"  <?= (isset($filters['sex']) && $filters['sex'] == 'Other')  ? 'selected' : '' ?>>Other</option>
                 </select>
             </div>
             <div class="col-md-12">
@@ -50,6 +52,7 @@
                 <th>ID</th>
                 <th>RFID</th>
                 <th>First Name</th>
+                <th>Middle Name</th>
                 <th>Last Name</th>
                 <th>Year</th>
                 <th>Course</th>
@@ -67,6 +70,7 @@
                         <td><?= htmlspecialchars($student['id']) ?></td>
                         <td><?= htmlspecialchars($student['rfid']) ?></td>
                         <td><?= htmlspecialchars($student['firstname']) ?></td>
+                        <td><?= htmlspecialchars($student['middlename']) ?></td>
                         <td><?= htmlspecialchars($student['lastname']) ?></td>
                         <td><?= htmlspecialchars($student['year']) ?></td>
                         <td><?= htmlspecialchars($student['course']) ?></td>
@@ -89,7 +93,7 @@
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="11" class="text-center">No students found.</td>
+                    <td colspan="12" class="text-center">No students found.</td>
                 </tr>
             <?php endif; ?>
         </tbody>

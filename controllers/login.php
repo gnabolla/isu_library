@@ -3,11 +3,18 @@
 use Core\Auth;
 use Core\Middleware;
 
+// ADD THIS LINE:
+require_once __DIR__ . '/../core/AuditLog.php';
+
+use Core\AuditLog;
+
 Middleware::requireGuest();
 
 $config = require('config.php');
 $db = new Database($config['database']);
 $auth = new Auth($db);
+
+$auditLog = new AuditLog($db);
 
 $errors = [];
 
@@ -18,6 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $auth->login($email, $password);
     
     if ($result['success']) {
+        $userId = $_SESSION['user_id'];
+        $auditLog->log($userId, 'login', 'User logged in successfully');
         header('Location: ' . BASE_PATH . '/');
         exit();
     }

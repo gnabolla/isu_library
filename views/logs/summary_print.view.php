@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <title>Print-Only Logs Summary</title>
     <style>
-        /* Hide navbars, sidebars, etc. when printing */
+        @page {
+            size: A4;
+            margin: 1cm;
+        }
         @media print {
-            /* Hide any elements with these selectors */
             nav,
             #sidebar,
             .navbar,
@@ -17,17 +19,26 @@
             }
             body {
                 font-family: Arial, sans-serif;
-                margin: 1in;
             }
             table, th, td {
                 border: 1px solid #000;
                 border-collapse: collapse;
-                page-break-inside: avoid;
             }
             thead { display: table-header-group; }
             tfoot { display: table-footer-group; }
+            tr {
+                page-break-inside: avoid;
+            }
+            /* OPTIONAL: If you want the footer fixed at the bottom of the page */
+            /*
+            .official-footer {
+                position: fixed;
+                bottom: 1cm;
+                left: 1cm;
+                right: 1cm;
+            }
+            */
         }
-        /* Screen Styles */
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
@@ -45,10 +56,13 @@
         }
         .official-footer {
             margin-top: 30px;
-            text-align: center;
+            /* Flex container for left/right alignment */
+            display: flex;
+            justify-content: space-between;
         }
-        button {
-            margin-bottom: 20px;
+        .official-footer > div {
+            /* Adjust these if you want more spacing or different styling */
+            font-size: 0.95rem;
         }
     </style>
 </head>
@@ -90,8 +104,12 @@
 </table>
 
 <div class="official-footer">
-    <p>Printed by: <?= htmlspecialchars($_SESSION['user_name'] ?? 'Unknown User') ?></p>
-    <p>Date: <?= date('F j, Y, g:i a') ?></p>
+    <div>
+        Printed by: <?= htmlspecialchars($_SESSION['user_name'] ?? 'Unknown User') ?>
+    </div>
+    <div>
+        Date: <?= date('F j, Y, g:i a') ?>
+    </div>
 </div>
 
 </body>

@@ -73,9 +73,15 @@ class Log {
         return ($diff < $bufferSeconds);
     }
 
-    // Retrieve filtered logs
+    // Retrieve filtered logs (updated to include s.sex)
     public function getFilteredLogs($filters) {
-        $sql = "SELECT l.*, s.firstname, s.lastname, s.course as program, s.department, s.rfid 
+        $sql = "SELECT l.*, 
+                       s.firstname, 
+                       s.lastname, 
+                       s.course as program, 
+                       s.department, 
+                       s.rfid,
+                       s.sex
                 FROM logs l 
                 JOIN students s ON l.student_id = s.id 
                 WHERE DATE(l.timestamp) BETWEEN :date_from AND :date_to";
@@ -114,7 +120,7 @@ class Log {
         return $stmt->fetchAll();
     }
 
-    // NEW: Get all logs for a specific student
+    // Get all logs for a specific student
     public function getLogsByStudentId(int $student_id): array {
         $sql = "SELECT * FROM logs 
                 WHERE student_id = :student_id

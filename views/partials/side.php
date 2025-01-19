@@ -1,5 +1,3 @@
-<!-- views/partials/side.php -->
-
 <nav id="sidebar" class="active">
     <div class="sidebar-header">
         <img src="<?= BASE_PATH ?>/assets/img/bootstraper-logo.png" alt="bootraper logo" class="app-logo">
@@ -16,6 +14,9 @@
         </li>
         <li>
             <a href="<?= BASE_PATH ?>/logs"><i class="fas fa-history"></i> RFID Logs</a>
+        </li>
+        <li>
+            <a href="<?= BASE_PATH ?>/audit-logs"><i class="fas fa-file-alt"></i> Audit Logs</a>
         </li>
     </ul>
 </nav>

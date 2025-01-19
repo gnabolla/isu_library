@@ -4,20 +4,32 @@
 use Core\Middleware;
 use Core\Student;
 use Core\Log;
+use Core\AuditLog;
 
-// Include the Student and Log classes
 require_once __DIR__ . '/../core/Student.php';
 require_once __DIR__ . '/../core/Log.php';
 
-// Ensure the user is authenticated
+require_once __DIR__ . '/../core/AuditLog.php';
+
+Middleware::requireAuth();
+
+$config = require('config.php');
+$db = new Database($config['database']);
+$studentModel = new Student($db);
+$logModel = new Log($db);
+$auditLog = new AuditLog($db);
+
 Middleware::requireAuth();
 
 $config = require('config.php');
 $db = new Database($config['database']);
 $studentModel = new Student($db);
 
-// Also create a Log model instance (for fetching individual student logs)
+// Create a Log model instance (if needed for logs retrieval)
 $logModel = new Log($db);
+
+// Instantiate AuditLog
+$auditLog = new AuditLog($db);
 
 $action = $_GET['action'] ?? 'index';
 $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
@@ -26,15 +38,16 @@ switch ($action) {
     case 'create':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
-                'firstname' => trim($_POST['firstname']),
-                'lastname' => trim($_POST['lastname']),
-                'year' => (int)$_POST['year'],
-                'course' => trim($_POST['course']),
-                'section' => trim($_POST['section']),
+                'firstname'  => trim($_POST['firstname']),
+                'middlename' => trim($_POST['middlename']),
+                'lastname'   => trim($_POST['lastname']),
+                'year'       => (int)$_POST['year'],
+                'course'     => trim($_POST['course']),
+                'section'    => trim($_POST['section']),
                 'department' => trim($_POST['department']),
-                'rfid' => trim($_POST['rfid']),
-                'sex' => $_POST['sex'],
-                'image' => '' // Will handle image upload below
+                'rfid'       => trim($_POST['rfid']),
+                'sex'        => $_POST['sex'],
+                'image'      => '' // Will handle image upload below
             ];
 
             // Handle Image Upload
@@ -53,7 +66,7 @@ switch ($action) {
             // Validate data (basic validation)
             $errors = [];
             foreach ($data as $key => $value) {
-                if (in_array($key, ['firstname', 'lastname', 'course', 'section', 'department', 'rfid', 'sex']) && empty($value)) {
+                if (in_array($key, ['firstname', 'middlename', 'lastname', 'course', 'section', 'department', 'rfid', 'sex']) && empty($value)) {
                     $errors[] = ucfirst($key) . ' is required.';
                 }
             }
@@ -61,6 +74,12 @@ switch ($action) {
             if (empty($errors)) {
                 try {
                     $studentModel->create($data);
+                    $newStudentId = $db->getConnection()->lastInsertId();
+
+                    // Log audit
+                    $userId = $_SESSION['user_id'] ?? null;
+                    $auditLog->log($userId, 'create_student', 'Created student ID ' . $newStudentId);
+
                     header('Location: ' . BASE_PATH . '/students');
                     exit();
                 } catch (Exception $e) {
@@ -90,15 +109,16 @@ switch ($action) {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
-                'firstname' => trim($_POST['firstname']),
-                'lastname' => trim($_POST['lastname']),
-                'year' => (int)$_POST['year'],
-                'course' => trim($_POST['course']),
-                'section' => trim($_POST['section']),
+                'firstname'  => trim($_POST['firstname']),
+                'middlename' => trim($_POST['middlename']),
+                'lastname'   => trim($_POST['lastname']),
+                'year'       => (int)$_POST['year'],
+                'course'     => trim($_POST['course']),
+                'section'    => trim($_POST['section']),
                 'department' => trim($_POST['department']),
-                'rfid' => trim($_POST['rfid']),
-                'sex' => $_POST['sex'],
-                'image' => $student['image'] // Preserve existing image
+                'rfid'       => trim($_POST['rfid']),
+                'sex'        => $_POST['sex'],
+                'image'      => $student['image']
             ];
 
             // Handle Image Upload
@@ -121,7 +141,7 @@ switch ($action) {
             // Validate data (basic validation)
             $errors = [];
             foreach ($data as $key => $value) {
-                if (in_array($key, ['firstname', 'lastname', 'course', 'section', 'department', 'rfid', 'sex']) && empty($value)) {
+                if (in_array($key, ['firstname', 'middlename', 'lastname', 'course', 'section', 'department', 'rfid', 'sex']) && empty($value)) {
                     $errors[] = ucfirst($key) . ' is required.';
                 }
             }
@@ -129,6 +149,11 @@ switch ($action) {
             if (empty($errors)) {
                 try {
                     $studentModel->update($id, $data);
+
+                    // Log audit
+                    $userId = $_SESSION['user_id'] ?? null;
+                    $auditLog->log($userId, 'update_student', 'Updated student ID ' . $id);
+
                     header('Location: ' . BASE_PATH . '/students');
                     exit();
                 } catch (Exception $e) {
@@ -162,10 +187,14 @@ switch ($action) {
             if ($student['image'] && file_exists($student['image'])) {
                 unlink($student['image']);
             }
+
+            // Log audit
+            $userId = $_SESSION['user_id'] ?? null;
+            $auditLog->log($userId, 'delete_student', 'Deleted student ID ' . $id);
+
             header('Location: ' . BASE_PATH . '/students');
             exit();
         } catch (Exception $e) {
-            // Handle error
             $errors[] = 'Failed to delete student: ' . $e->getMessage();
             $title = 'Error';
             $view = 'views/404.php';
@@ -183,7 +212,7 @@ switch ($action) {
             abort(404);
         }
 
-        // NEW: Retrieve this student's logs
+        // Retrieve this student's logs
         $studentLogs = $logModel->getLogsByStudentId($id);
 
         $title = 'View Student';
@@ -196,11 +225,11 @@ switch ($action) {
         // Handle search and filters
         $search = $_GET['search'] ?? '';
         $filters = [
-            'year' => $_GET['year'] ?? '',
-            'course' => $_GET['course'] ?? '',
-            'section' => $_GET['section'] ?? '',
+            'year'       => $_GET['year'] ?? '',
+            'course'     => $_GET['course'] ?? '',
+            'section'    => $_GET['section'] ?? '',
             'department' => $_GET['department'] ?? '',
-            'sex' => $_GET['sex'] ?? ''
+            'sex'        => $_GET['sex'] ?? ''
         ];
         $filters = array_filter($filters);
 

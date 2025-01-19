@@ -21,22 +21,22 @@ if ($uri === '' || $uri === false) {
     $uri = '/';
 }
 
-// Define protected routes that require authentication
+// Define protected routes (require authentication)
 $protected_routes = [
-    "/" => "controllers/index.php",
-    "/files" => "files_template.php",
-    "/allfiles" => "files.php",
-    "/students" => "controllers/students.php",
-    "/rfid" => "controllers/rfid.php",
-    "/logs" => "controllers/logs.php",
-    // Added route for logs summary printing
-    "/logs/summary" => "controllers/logs_summary.php",
-    "/logs/summary-print" => "controllers/logs_summary_print.php",
+    "/"                 => "controllers/index.php",
+    "/students"         => "controllers/students.php",
+    "/logs"             => "controllers/logs.php",
+    "/logs/summary"     => "controllers/logs_summary.php",
+    "/logs/summary-print"=> "controllers/logs_summary_print.php",
+    // Important: Ensure we have the line below
+    "/logs/print"       => "controllers/logs_print.php",
+    "/audit-logs"       => "controllers/audit_logs.php",
 ];
 
-// Define public routes
+// Define public routes (no auth required)
 $public_routes = [
-    "/login" => "controllers/login.php",
+    "/rfid"   => "controllers/rfid.php",
+    "/login"  => "controllers/login.php",
     "/signup" => "controllers/signup.php",
     "/logout" => "controllers/logout.php"
 ];
@@ -53,14 +53,12 @@ function abort($code = 404) {
     exit();
 }
 
-// Updated routing logic with middleware
 function routeToController($uri, $routes, $protected_routes) {
     if (array_key_exists($uri, $routes)) {
-        // Check if route requires authentication
+        // If route is in protected routes, enforce authentication
         if (array_key_exists($uri, $protected_routes)) {
             \Core\Middleware::requireAuth();
         }
-        
         $controller = $routes[$uri];
         if (file_exists($controller)) {
             require $controller;
@@ -70,4 +68,5 @@ function routeToController($uri, $routes, $protected_routes) {
     abort(404);
 }
 
+// Invoke the router
 routeToController($uri, $routes, $protected_routes);

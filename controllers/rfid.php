@@ -1,14 +1,13 @@
 <?php
 // controllers/rfid.php
 
-use Core\Middleware;
 use Core\Student;
 use Core\Log;
 
 require_once __DIR__ . '/../core/Student.php';
 require_once __DIR__ . '/../core/Log.php';
 
-Middleware::requireAuth();
+// REMOVED: Middleware::requireAuth(); to allow access without login
 
 $config = require('config.php');
 $db = new Database($config['database']);
@@ -92,5 +91,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $title = 'RFID Scan Interface';
-// $view = 'views/rfid/scan.view.php';
 require 'views/rfid/scan.view.php';

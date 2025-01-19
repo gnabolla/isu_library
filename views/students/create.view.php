@@ -1,5 +1,4 @@
 <!-- views/students/create.view.php -->
-<?php // Add any necessary PHP opening tags or includes if needed ?>
 <div class="container mt-4">
     <h2>Add New Student</h2>
 
@@ -20,6 +19,11 @@
                    value="<?= htmlspecialchars($_POST['firstname'] ?? '') ?>">
         </div>
         <div class="mb-3">
+            <label for="middlename" class="form-label">Middle Name</label>
+            <input type="text" name="middlename" class="form-control" required
+                   value="<?= htmlspecialchars($_POST['middlename'] ?? '') ?>">
+        </div>
+        <div class="mb-3">
             <label for="lastname" class="form-label">Last Name</label>
             <input type="text" name="lastname" class="form-control" required 
                    value="<?= htmlspecialchars($_POST['lastname'] ?? '') ?>">
@@ -37,7 +41,6 @@
             </select>
         </div>
 
-        <!-- Updated: Course selection dropdown -->
         <div class="mb-3">
             <label for="course" class="form-label">Course</label>
             <select name="course" id="courseSelect" class="form-select" required>
@@ -54,14 +57,12 @@
             </select>
         </div>
 
-        <!-- Updated: Department field (auto-populated) -->
         <div class="mb-3">
             <label for="department" class="form-label">Department</label>
             <input type="text" name="department" id="department" class="form-control" required
                    value="<?= htmlspecialchars($_POST['department'] ?? '') ?>">
         </div>
 
-        <!-- Updated: Section field (auto-populated) -->
         <div class="mb-3">
             <label for="section" class="form-label">Section</label>
             <select name="section" id="sectionSelect" class="form-select" required>
@@ -92,7 +93,6 @@
     </form>
 </div>
 
-<!-- Updated: JavaScript for auto-populating department and sections -->
 <script>
     const departmentMap = {
       "BSIT":   "IICT",

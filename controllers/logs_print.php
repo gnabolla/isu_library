@@ -1,5 +1,4 @@
 <?php
-// controllers/logs.php
 use Core\Middleware;
 use Core\Log;
 
@@ -11,7 +10,7 @@ $config = require('config.php');
 $db = new Database($config['database']);
 $logModel = new Log($db);
 
-// Get filters from request
+// Capture the same filters as in logs.php
 $filters = [
     'date_from' => $_GET['date_from'] ?? date('Y-m-d'),
     'date_to'   => $_GET['date_to']   ?? date('Y-m-d'),
@@ -19,8 +18,7 @@ $filters = [
     'department'=> $_GET['department'] ?? ''
 ];
 
-// Get logs with filters
-$logs = $logModel->getFilteredLogs($filters);
+$logs  = $logModel->getFilteredLogs($filters);
 $count = count($logs);
 
 // Count male/female
@@ -36,10 +34,6 @@ foreach ($logs as $log) {
 $maleCount = $males;
 $femaleCount = $females;
 
-// Get unique programs and departments for filter dropdowns
-$programs = $logModel->getUniquePrograms();
-$departments = $logModel->getUniqueDepartments();
-
-$title = 'RFID Logs';
-$view = 'views/logs/index.view.php';
+$title = 'Print Filtered RFID Logs';
+$view  = 'views/logs/print.view.php';
 require 'views/layout.view.php';

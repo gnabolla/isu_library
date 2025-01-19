@@ -9,7 +9,11 @@ Middleware::requireAuth();
 $config = require('config.php');
 $db = new Database($config['database']);
 
-// Fetch your logs summary data
+// Optional: Capture a date range from query parameters
+$dateFrom = $_GET['date_from'] ?? '';
+$dateTo   = $_GET['date_to']   ?? '';
+
+// Build query with optional date filtering
 $sql = "
     SELECT 
         s.department AS college,
@@ -18,12 +22,19 @@ $sql = "
         COUNT(l.id) AS total
     FROM logs l
     JOIN students s ON l.student_id = s.id
-    GROUP BY s.department
-    ORDER BY s.department
 ";
-$logSummary = $db->query($sql)->fetchAll();
 
-// Pass data to the normal summary page
+$params = [];
+if ($dateFrom && $dateTo) {
+    $sql .= " WHERE DATE(l.timestamp) BETWEEN :date_from AND :date_to";
+    $params['date_from'] = $dateFrom;
+    $params['date_to']   = $dateTo;
+}
+
+$sql .= " GROUP BY s.department ORDER BY s.department";
+
+$logSummary = $db->query($sql, $params)->fetchAll();
+
 $title = 'Logs Summary';
 $view = 'views/logs/summary.view.php';
 require 'views/layout.view.php';

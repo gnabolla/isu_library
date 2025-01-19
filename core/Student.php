@@ -13,8 +13,10 @@ class Student
 
     public function create(array $data)
     {
-        $sql = "INSERT INTO students (firstname, lastname, year, course, section, department, rfid, image, sex)
-                VALUES (:firstname, :lastname, :year, :course, :section, :department, :rfid, :image, :sex)";
+        $sql = "INSERT INTO students 
+                (firstname, middlename, lastname, year, course, section, department, rfid, image, sex)
+                VALUES 
+                (:firstname, :middlename, :lastname, :year, :course, :section, :department, :rfid, :image, :sex)";
         $this->db->query($sql, $data);
     }
 
@@ -22,6 +24,7 @@ class Student
     {
         $sql = "UPDATE students 
                    SET firstname   = :firstname,
+                       middlename  = :middlename,
                        lastname    = :lastname,
                        year        = :year,
                        course      = :course,
@@ -61,7 +64,10 @@ class Student
         $params = [];
 
         if (!empty($search)) {
-            $sql .= " AND (firstname LIKE :search OR lastname LIKE :search OR rfid LIKE :search)";
+            $sql .= " AND (firstname LIKE :search 
+                       OR middlename LIKE :search
+                       OR lastname LIKE :search 
+                       OR rfid LIKE :search)";
             $params['search'] = "%{$search}%";
         }
 

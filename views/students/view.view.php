@@ -27,6 +27,10 @@
                     <td><?= htmlspecialchars($student['firstname']) ?></td>
                 </tr>
                 <tr>
+                    <th>Middle Name</th>
+                    <td><?= htmlspecialchars($student['middlename']) ?></td>
+                </tr>
+                <tr>
                     <th>Last Name</th>
                     <td><?= htmlspecialchars($student['lastname']) ?></td>
                 </tr>
@@ -62,7 +66,6 @@
         </div>
     </div>
 
-    <!-- NEW: Student Logs Section -->
     <div class="card mt-4">
         <div class="card-body">
             <h3>Logs</h3>
