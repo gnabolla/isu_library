@@ -1,4 +1,6 @@
 <?php
+require __DIR__ . '/vendor/autoload.php';
+
 // index.php (Core)
 // This is the entry point for your application.
 

@@ -1,17 +1,18 @@
-<!-- views/students/view.view.php -->
-
 <div class="container mt-4">
     <h2>Student Details</h2>
     <a href="<?= BASE_PATH ?>/students" class="btn btn-secondary mb-3">Back to Students</a>
 
     <div class="card">
         <div class="card-body">
-            <?php if ($student['image'] && file_exists($student['image'])): ?>
-                <img src="<?= BASE_PATH ?>/<?= htmlspecialchars($student['image']) ?>" 
-                     alt="Student Image" class="img-thumbnail mb-3" width="150">
-            <?php else: ?>
-                <p>No Image Available</p>
-            <?php endif; ?>
+
+            <?php
+                $imgPath = $student['image'];
+                if (!$imgPath || !file_exists($imgPath)) {
+                    $imgPath = 'assets/img/default-avatar.png';
+                }
+            ?>
+            <img src="<?= BASE_PATH ?>/<?= htmlspecialchars($imgPath) ?>"
+                 alt="Student Image" class="img-thumbnail mb-3" width="150">
 
             <table class="table table-bordered">
                 <tr>
@@ -40,7 +41,7 @@
                 </tr>
                 <tr>
                     <th>Course</th>
-                    <td><?= htmlspecialchars($student['course']) ?></td>
+                    <td><?= htmlspecialchars($student['course_name'] ?? '') ?></td>
                 </tr>
                 <tr>
                     <th>Section</th>
@@ -48,7 +49,7 @@
                 </tr>
                 <tr>
                     <th>Department</th>
-                    <td><?= htmlspecialchars($student['department']) ?></td>
+                    <td><?= htmlspecialchars($student['department_name'] ?? '') ?></td>
                 </tr>
                 <tr>
                     <th>Sex</th>
@@ -78,12 +79,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($studentLogs as $log): ?>
-                            <tr>
-                                <td><?= date('Y-m-d H:i:s', strtotime($log['timestamp'])) ?></td>
-                                <td><?= htmlspecialchars(ucfirst($log['type'])) ?></td>
-                            </tr>
-                        <?php endforeach; ?>
+                    <?php foreach ($studentLogs as $log): ?>
+                        <tr>
+                            <td><?= date('Y-m-d H:i:s', strtotime($log['timestamp'])) ?></td>
+                            <td><?= htmlspecialchars(ucfirst($log['type'])) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
                     </tbody>
                 </table>
             <?php else: ?>

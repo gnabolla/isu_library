@@ -73,49 +73,65 @@ class Log {
         return ($diff < $bufferSeconds);
     }
 
-    // Retrieve filtered logs (updated to include s.sex)
-    public function getFilteredLogs($filters) {
-        $sql = "SELECT l.*, 
-                       s.firstname, 
-                       s.lastname, 
-                       s.course as program, 
-                       s.department, 
+    // Retrieve filtered logs, properly joining courses and departments
+    public function getFilteredLogs(array $filters) {
+        // We'll JOIN courses (c) and departments (d) to get 'program' and 'department' names
+        $sql = "SELECT l.*,
+                       s.firstname,
+                       s.lastname,
                        s.rfid,
-                       s.sex
-                FROM logs l 
-                JOIN students s ON l.student_id = s.id 
+                       s.sex,
+                       c.name AS program,
+                       d.name AS department
+                FROM logs l
+                JOIN students s ON l.student_id = s.id
+                LEFT JOIN courses c ON s.course_id = c.id
+                LEFT JOIN departments d ON s.department_id = d.id
                 WHERE DATE(l.timestamp) BETWEEN :date_from AND :date_to";
-        
+
         $params = [
             'date_from' => $filters['date_from'],
             'date_to'   => $filters['date_to']
         ];
 
+        // Filter by course name if provided
         if (!empty($filters['program'])) {
-            $sql .= " AND s.course = :program";
+            $sql .= " AND c.name = :program";
             $params['program'] = $filters['program'];
         }
+
+        // Filter by department name if provided
         if (!empty($filters['department'])) {
-            $sql .= " AND s.department = :department";
+            $sql .= " AND d.name = :department";
             $params['department'] = $filters['department'];
         }
 
+        // Filter by type ('in' or 'out')
+        if (!empty($filters['type'])) {
+            $sql .= " AND l.type = :type";
+            $params['type'] = $filters['type'];
+        }
+
         $sql .= " ORDER BY l.timestamp DESC";
-        
+
         $stmt = $this->db->query($sql, $params);
         return $stmt->fetchAll();
     }
 
-    // Get unique programs
+    // Get unique programs (based on courses table)
     public function getUniquePrograms() {
-        $sql = "SELECT DISTINCT course as program FROM students ORDER BY course";
+        $sql = "SELECT DISTINCT name as program
+                FROM courses
+                ORDER BY name";
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll();
     }
 
-    // Get unique departments
+    // Get unique departments (based on departments table)
     public function getUniqueDepartments() {
-        $sql = "SELECT DISTINCT department FROM students ORDER BY department";
+        $sql = "SELECT DISTINCT name as department
+                FROM departments
+                ORDER BY name";
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll();
     }

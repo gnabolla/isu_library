@@ -2,10 +2,6 @@
 
 use Core\Auth;
 use Core\Middleware;
-
-// ADD THIS LINE:
-require_once __DIR__ . '/../core/AuditLog.php';
-
 use Core\AuditLog;
 
 Middleware::requireGuest();

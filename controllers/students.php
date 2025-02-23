@@ -1,84 +1,86 @@
 <?php
-// controllers/students.php
 
 use Core\Middleware;
 use Core\Student;
 use Core\Log;
 use Core\AuditLog;
+use Core\Course;
+use Core\Department;
 
 require_once __DIR__ . '/../core/Student.php';
 require_once __DIR__ . '/../core/Log.php';
-
 require_once __DIR__ . '/../core/AuditLog.php';
+require_once __DIR__ . '/../core/Course.php';
+require_once __DIR__ . '/../core/Department.php';
 
 Middleware::requireAuth();
 
 $config = require('config.php');
 $db = new Database($config['database']);
+
 $studentModel = new Student($db);
-$logModel = new Log($db);
-$auditLog = new AuditLog($db);
-
-Middleware::requireAuth();
-
-$config = require('config.php');
-$db = new Database($config['database']);
-$studentModel = new Student($db);
-
-// Create a Log model instance (if needed for logs retrieval)
-$logModel = new Log($db);
-
-// Instantiate AuditLog
-$auditLog = new AuditLog($db);
+$logModel     = new Log($db);
+$auditLog     = new AuditLog($db);
+$courseModel  = new Course($db);
+$deptModel    = new Department($db);
 
 $action = $_GET['action'] ?? 'index';
 $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
+$errors = [];
 
 switch ($action) {
     case 'create':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
-                'firstname'  => trim($_POST['firstname']),
-                'middlename' => trim($_POST['middlename']),
-                'lastname'   => trim($_POST['lastname']),
-                'year'       => (int)$_POST['year'],
-                'course'     => trim($_POST['course']),
-                'section'    => trim($_POST['section']),
-                'department' => trim($_POST['department']),
-                'rfid'       => trim($_POST['rfid']),
-                'sex'        => $_POST['sex'],
-                'image'      => '' // Will handle image upload below
+                'firstname'     => trim($_POST['firstname']),
+                'middlename'    => trim($_POST['middlename']),
+                'lastname'      => trim($_POST['lastname']),
+                'year'          => (int)$_POST['year'],
+                'course_id'     => (int)$_POST['course_id'],
+                'section'       => trim($_POST['section'] ?? ''),
+                'department_id' => (int)$_POST['department_id'],
+                'rfid'          => trim($_POST['rfid']),
+                'sex'           => $_POST['sex'],
+                'image'         => ''  // Will set below
             ];
 
-            // Handle Image Upload
+            // Basic validation
+            foreach (['firstname','middlename','lastname','rfid','sex'] as $req) {
+                if (empty($data[$req])) {
+                    $errors[] = ucfirst($req).' is required.';
+                }
+            }
+            if ($data['course_id'] <= 0) {
+                $errors[] = 'Course is required.';
+            }
+            if ($data['department_id'] <= 0) {
+                $errors[] = 'Department is required.';
+            }
+
+            // Handle image upload (if any)
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
                 $uploadDir = 'uploads/';
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
                 }
-                $filename = uniqid() . '_' . basename($_FILES['image']['name']);
+                $filename   = uniqid() . '_' . basename($_FILES['image']['name']);
                 $targetFile = $uploadDir . $filename;
                 if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
                     $data['image'] = $targetFile;
                 }
-            }
-
-            // Validate data (basic validation)
-            $errors = [];
-            foreach ($data as $key => $value) {
-                if (in_array($key, ['firstname', 'middlename', 'lastname', 'course', 'section', 'department', 'rfid', 'sex']) && empty($value)) {
-                    $errors[] = ucfirst($key) . ' is required.';
-                }
+            } else {
+                // If no file chosen, assign default avatar
+                $data['image'] = 'assets/img/default-avatar.png';
             }
 
             if (empty($errors)) {
                 try {
                     $studentModel->create($data);
-                    $newStudentId = $db->getConnection()->lastInsertId();
+                    $newId = $db->getConnection()->lastInsertId();
 
-                    // Log audit
+                    // Audit
                     $userId = $_SESSION['user_id'] ?? null;
-                    $auditLog->log($userId, 'create_student', 'Created student ID ' . $newStudentId);
+                    $auditLog->log($userId, 'create_student', 'Created student ID '.$newId);
 
                     header('Location: ' . BASE_PATH . '/students');
                     exit();
@@ -87,12 +89,16 @@ switch ($action) {
                 }
             }
 
+            $courses     = $courseModel->getAll();
+            $departments = $deptModel->getAll();
             $title = 'Add Student';
-            $view = 'views/students/create.view.php';
+            $view  = 'views/students/create.view.php';
             require 'views/layout.view.php';
         } else {
+            $courses     = $courseModel->getAll();
+            $departments = $deptModel->getAll();
             $title = 'Add Student';
-            $view = 'views/students/create.view.php';
+            $view  = 'views/students/create.view.php';
             require 'views/layout.view.php';
         }
         break;
@@ -109,50 +115,59 @@ switch ($action) {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
-                'firstname'  => trim($_POST['firstname']),
-                'middlename' => trim($_POST['middlename']),
-                'lastname'   => trim($_POST['lastname']),
-                'year'       => (int)$_POST['year'],
-                'course'     => trim($_POST['course']),
-                'section'    => trim($_POST['section']),
-                'department' => trim($_POST['department']),
-                'rfid'       => trim($_POST['rfid']),
-                'sex'        => $_POST['sex'],
-                'image'      => $student['image']
+                'firstname'     => trim($_POST['firstname']),
+                'middlename'    => trim($_POST['middlename']),
+                'lastname'      => trim($_POST['lastname']),
+                'year'          => (int)$_POST['year'],
+                'course_id'     => (int)$_POST['course_id'],
+                'section'       => trim($_POST['section'] ?? ''),
+                'department_id' => (int)$_POST['department_id'],
+                'rfid'          => trim($_POST['rfid']),
+                'sex'           => $_POST['sex'],
+                'image'         => $student['image'] // existing image by default
             ];
 
-            // Handle Image Upload
+            foreach (['firstname','middlename','lastname','rfid','sex'] as $req) {
+                if (empty($data[$req])) {
+                    $errors[] = ucfirst($req).' is required.';
+                }
+            }
+            if ($data['course_id'] <= 0) {
+                $errors[] = 'Course is required.';
+            }
+            if ($data['department_id'] <= 0) {
+                $errors[] = 'Department is required.';
+            }
+
+            // If a new file is uploaded
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
                 $uploadDir = 'uploads/';
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
                 }
-                $filename = uniqid() . '_' . basename($_FILES['image']['name']);
+                $filename   = uniqid() . '_' . basename($_FILES['image']['name']);
                 $targetFile = $uploadDir . $filename;
                 if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
-                    // Optionally, delete the old image
-                    if ($student['image'] && file_exists($student['image'])) {
+                    // Remove old image if not default
+                    if ($student['image'] 
+                        && file_exists($student['image']) 
+                        && $student['image'] !== 'assets/img/default-avatar.png') {
                         unlink($student['image']);
                     }
                     $data['image'] = $targetFile;
                 }
-            }
-
-            // Validate data (basic validation)
-            $errors = [];
-            foreach ($data as $key => $value) {
-                if (in_array($key, ['firstname', 'middlename', 'lastname', 'course', 'section', 'department', 'rfid', 'sex']) && empty($value)) {
-                    $errors[] = ucfirst($key) . ' is required.';
+            } else {
+                // If old image was empty or missing, use default
+                if (!$student['image'] || !file_exists($student['image'])) {
+                    $data['image'] = 'assets/img/default-avatar.png';
                 }
             }
 
             if (empty($errors)) {
                 try {
                     $studentModel->update($id, $data);
-
-                    // Log audit
                     $userId = $_SESSION['user_id'] ?? null;
-                    $auditLog->log($userId, 'update_student', 'Updated student ID ' . $id);
+                    $auditLog->log($userId, 'update_student', 'Updated student ID '.$id);
 
                     header('Location: ' . BASE_PATH . '/students');
                     exit();
@@ -161,12 +176,16 @@ switch ($action) {
                 }
             }
 
+            $courses     = $courseModel->getAll();
+            $departments = $deptModel->getAll();
             $title = 'Edit Student';
-            $view = 'views/students/edit.view.php';
+            $view  = 'views/students/edit.view.php';
             require 'views/layout.view.php';
         } else {
+            $courses     = $courseModel->getAll();
+            $departments = $deptModel->getAll();
             $title = 'Edit Student';
-            $view = 'views/students/edit.view.php';
+            $view  = 'views/students/edit.view.php';
             require 'views/layout.view.php';
         }
         break;
@@ -175,7 +194,6 @@ switch ($action) {
         if (!$id) {
             abort(404);
         }
-
         $student = $studentModel->getById($id);
         if (!$student) {
             abort(404);
@@ -183,14 +201,13 @@ switch ($action) {
 
         try {
             $studentModel->delete($id);
-            // Optionally, delete the image
-            if ($student['image'] && file_exists($student['image'])) {
+            if ($student['image'] 
+                && file_exists($student['image']) 
+                && $student['image'] !== 'assets/img/default-avatar.png') {
                 unlink($student['image']);
             }
-
-            // Log audit
             $userId = $_SESSION['user_id'] ?? null;
-            $auditLog->log($userId, 'delete_student', 'Deleted student ID ' . $id);
+            $auditLog->log($userId, 'delete_student', 'Deleted student ID '.$id);
 
             header('Location: ' . BASE_PATH . '/students');
             exit();
@@ -206,23 +223,20 @@ switch ($action) {
         if (!$id) {
             abort(404);
         }
-
         $student = $studentModel->getById($id);
         if (!$student) {
             abort(404);
         }
 
-        // Retrieve this student's logs
         $studentLogs = $logModel->getLogsByStudentId($id);
 
         $title = 'View Student';
-        $view = 'views/students/view.view.php';
+        $view  = 'views/students/view.view.php';
         require 'views/layout.view.php';
         break;
 
     case 'index':
     default:
-        // Handle search and filters
         $search = $_GET['search'] ?? '';
         $filters = [
             'year'       => $_GET['year'] ?? '',
@@ -236,7 +250,7 @@ switch ($action) {
         $students = $studentModel->getAll($filters, $search);
 
         $title = 'Students';
-        $view = 'views/students/index.view.php';
+        $view  = 'views/students/index.view.php';
         require 'views/layout.view.php';
         break;
 }

@@ -12,11 +12,9 @@ $scriptName = $_SERVER['SCRIPT_NAME'];
 $basePath = rtrim(dirname($scriptName), '/\\');
 
 $uri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-
 if (strpos($uri, $basePath) === 0) {
     $uri = substr($uri, strlen($basePath));
 }
-
 if ($uri === '' || $uri === false) {
     $uri = '/';
 }
@@ -28,9 +26,11 @@ $protected_routes = [
     "/logs"             => "controllers/logs.php",
     "/logs/summary"     => "controllers/logs_summary.php",
     "/logs/summary-print"=> "controllers/logs_summary_print.php",
-    // Important: Ensure we have the line below
     "/logs/print"       => "controllers/logs_print.php",
     "/audit-logs"       => "controllers/audit_logs.php",
+    "/departments"      => "controllers/departments.php",
+    "/courses"          => "controllers/courses.php",
+    "/import-students"  => "controllers/import_students.php"
 ];
 
 // Define public routes (no auth required)
@@ -38,10 +38,10 @@ $public_routes = [
     "/rfid"   => "controllers/rfid.php",
     "/login"  => "controllers/login.php",
     "/signup" => "controllers/signup.php",
-    "/logout" => "controllers/logout.php"
+    "/logout" => "controllers/logout.php",
+    "/setup"  => "controllers/setup.php"
 ];
 
-// Combine all routes
 $routes = array_merge($protected_routes, $public_routes);
 
 define('BASE_PATH', $basePath);
@@ -55,7 +55,6 @@ function abort($code = 404) {
 
 function routeToController($uri, $routes, $protected_routes) {
     if (array_key_exists($uri, $routes)) {
-        // If route is in protected routes, enforce authentication
         if (array_key_exists($uri, $protected_routes)) {
             \Core\Middleware::requireAuth();
         }
@@ -68,5 +67,4 @@ function routeToController($uri, $routes, $protected_routes) {
     abort(404);
 }
 
-// Invoke the router
 routeToController($uri, $routes, $protected_routes);

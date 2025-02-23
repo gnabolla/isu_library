@@ -1,5 +1,3 @@
-<!-- views/students/index.view.php -->
-
 <div class="container mt-4">
     <h2>Students</h2>
     <a href="<?= BASE_PATH ?>/students?action=create" class="btn btn-primary mb-3">Add New Student</a>
@@ -9,7 +7,8 @@
         <input type="hidden" name="action" value="index">
         <div class="row g-3">
             <div class="col-md-3">
-                <input type="text" name="search" class="form-control" placeholder="Search by name or RFID" value="<?= htmlspecialchars($search) ?>">
+                <input type="text" name="search" class="form-control" placeholder="Search name/RFID" 
+                       value="<?= htmlspecialchars($search) ?>">
             </div>
             <div class="col-md-2">
                 <select name="year" class="form-select">
@@ -22,13 +21,16 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <input type="text" name="course" class="form-control" placeholder="Course" value="<?= htmlspecialchars($filters['course'] ?? '') ?>">
+                <input type="text" name="course" class="form-control" placeholder="Course Name" 
+                       value="<?= htmlspecialchars($filters['course'] ?? '') ?>">
             </div>
             <div class="col-md-2">
-                <input type="text" name="section" class="form-control" placeholder="Section" value="<?= htmlspecialchars($filters['section'] ?? '') ?>">
+                <input type="text" name="section" class="form-control" placeholder="Section" 
+                       value="<?= htmlspecialchars($filters['section'] ?? '') ?>">
             </div>
             <div class="col-md-2">
-                <input type="text" name="department" class="form-control" placeholder="Department" value="<?= htmlspecialchars($filters['department'] ?? '') ?>">
+                <input type="text" name="department" class="form-control" placeholder="Department Name" 
+                       value="<?= htmlspecialchars($filters['department'] ?? '') ?>">
             </div>
             <div class="col-md-1">
                 <select name="sex" class="form-select">
@@ -45,7 +47,6 @@
         </div>
     </form>
 
-    <!-- Students Table -->
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
@@ -65,29 +66,34 @@
         </thead>
         <tbody>
             <?php if (!empty($students)): ?>
-                <?php foreach ($students as $student): ?>
+                <?php foreach ($students as $s): ?>
                     <tr>
-                        <td><?= htmlspecialchars($student['id']) ?></td>
-                        <td><?= htmlspecialchars($student['rfid']) ?></td>
-                        <td><?= htmlspecialchars($student['firstname']) ?></td>
-                        <td><?= htmlspecialchars($student['middlename']) ?></td>
-                        <td><?= htmlspecialchars($student['lastname']) ?></td>
-                        <td><?= htmlspecialchars($student['year']) ?></td>
-                        <td><?= htmlspecialchars($student['course']) ?></td>
-                        <td><?= htmlspecialchars($student['section']) ?></td>
-                        <td><?= htmlspecialchars($student['department']) ?></td>
-                        <td><?= htmlspecialchars($student['sex']) ?></td>
+                        <td><?= htmlspecialchars($s['id']) ?></td>
+                        <td><?= htmlspecialchars($s['rfid']) ?></td>
+                        <td><?= htmlspecialchars($s['firstname']) ?></td>
+                        <td><?= htmlspecialchars($s['middlename']) ?></td>
+                        <td><?= htmlspecialchars($s['lastname']) ?></td>
+                        <td><?= htmlspecialchars($s['year']) ?></td>
+                        <td><?= htmlspecialchars($s['course_name'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($s['section']) ?></td>
+                        <td><?= htmlspecialchars($s['department_name'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($s['sex']) ?></td>
                         <td>
-                            <?php if ($student['image'] && file_exists($student['image'])): ?>
-                                <img src="<?= BASE_PATH ?>/<?= htmlspecialchars($student['image']) ?>" alt="Image" width="50">
-                            <?php else: ?>
-                                N/A
-                            <?php endif; ?>
+                            <?php
+                                $imgPath = $s['image'];
+                                if (!$imgPath || !file_exists($imgPath)) {
+                                    $imgPath = 'assets/img/default-avatar.png';
+                                }
+                            ?>
+                            <img src="<?= BASE_PATH ?>/<?= htmlspecialchars($imgPath) ?>" alt="Image" width="50">
                         </td>
                         <td>
-                            <a href="<?= BASE_PATH ?>/students?action=view&id=<?= $student['id'] ?>" class="btn btn-info btn-sm">View</a>
-                            <a href="<?= BASE_PATH ?>/students?action=edit&id=<?= $student['id'] ?>" class="btn btn-warning btn-sm">Edit</a>
-                            <a href="<?= BASE_PATH ?>/students?action=delete&id=<?= $student['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this student?');">Delete</a>
+                            <a href="<?= BASE_PATH ?>/students?action=view&id=<?= $s['id'] ?>" class="btn btn-info btn-sm">View</a>
+                            <a href="<?= BASE_PATH ?>/students?action=edit&id=<?= $s['id'] ?>" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="<?= BASE_PATH ?>/students?action=delete&id=<?= $s['id'] ?>" class="btn btn-danger btn-sm"
+                               onclick="return confirm('Are you sure you want to delete this student?');">
+                               Delete
+                            </a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

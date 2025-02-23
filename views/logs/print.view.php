@@ -6,14 +6,12 @@
     <style>
         @page {
             size: A4;
-            margin: 1cm; /* You can adjust this to 0.5cm, etc., if you still see cutoff borders */
+            margin: 1cm;
         }
         @media print {
-            /* Hide the print button during print */
             .print-button {
                 display: none !important;
             }
-            /* Hide navbar, etc. */
             nav, #sidebar, .navbar {
                 display: none !important;
             }
@@ -30,44 +28,63 @@
             margin: 20px;
         }
         .container {
-            /* Table and content area at 95% to prevent right-edge cutoff */
             width: 95%;
             margin: 0 auto;
         }
         .header {
-            text-align: center;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
         }
         table {
             margin-bottom: 20px;
-            width: 100%; /* within the .container at 95% of page */
+            width: 100%;
         }
         .footer {
             text-align: right;
             margin-top: 20px;
         }
+        .header .logo {
+            margin-right: 20px;
+        }
     </style>
 </head>
 <body>
 
-<!-- The print button will be shown normally but hidden in print preview -->
 <button class="print-button" onclick="window.print();">Print</button>
 
 <div class="container">
     <div class="header">
-        <h2>ISABELA STATE UNIVERSITY - Roxas Campus</h2>
-        <h3>LIBRARY - Filtered Logs</h3>
-        <p>
-            Date Range:
-            <?= htmlspecialchars($_GET['date_from'] ?? '') ?>
-            to
-            <?= htmlspecialchars($_GET['date_to'] ?? '') ?>
-        </p>
-        <p>
-            <strong>Total Entries:</strong> <?= $count ?> &nbsp;|&nbsp;
-            <strong>Male:</strong> <?= $maleCount ?> &nbsp;|&nbsp;
-            <strong>Female:</strong> <?= $femaleCount ?>
-        </p>
+        <!-- Logo on the left -->
+        <div class="logo">
+            <img src="assets/img/school-logo.png" alt="School Logo" style="width: 90px;">
+        </div>
+        <div>
+            <h2>ISABELA STATE UNIVERSITY - Roxas Campus</h2>
+            <h3>LIBRARY - Filtered Logs</h3>
+            <p>
+                Date Range:
+                <?= htmlspecialchars($_GET['date_from'] ?? '') ?>
+                to
+                <?= htmlspecialchars($_GET['date_to'] ?? '') ?>
+            </p>
+            <p>
+                <?php
+                $logType = $_GET['type'] ?? '';
+                if ($logType === 'in') {
+                    echo "Type: IN only<br>";
+                } elseif ($logType === 'out') {
+                    echo "Type: OUT only<br>";
+                } else {
+                    echo "Type: All (IN & OUT)<br>";
+                }
+                ?>
+                <strong>Total Entries:</strong> <?= $count ?> &nbsp;|&nbsp;
+                <strong>Male (IN):</strong> <?= $maleCount ?> &nbsp;|&nbsp;
+                <strong>Female (IN):</strong> <?= $femaleCount ?>
+            </p>
+        </div>
     </div>
 
     <table>
