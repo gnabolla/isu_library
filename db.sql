@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 19, 2025 at 07:25 AM
+-- Generation Time: Apr 06, 2025 at 11:34 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -43,7 +43,68 @@ CREATE TABLE `audit_logs` (
 INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `description`, `created_at`, `updated_at`) VALUES
 (1, 1, 'logout', 'User logged out', '2025-01-19 06:20:05', '2025-01-19 06:20:05'),
 (2, 1, 'login', 'User logged in successfully', '2025-01-19 06:24:51', '2025-01-19 06:24:51'),
-(3, 1, 'logout', 'User logged out', '2025-01-19 06:25:14', '2025-01-19 06:25:14');
+(3, 1, 'logout', 'User logged out', '2025-01-19 06:25:14', '2025-01-19 06:25:14'),
+(4, 1, 'login', 'User logged in successfully', '2025-01-19 06:26:36', '2025-01-19 06:26:36'),
+(5, 1, 'login', 'User logged in successfully', '2025-01-19 06:35:25', '2025-01-19 06:35:25'),
+(6, 1, 'login', 'User logged in successfully', '2025-01-19 06:36:32', '2025-01-19 06:36:32'),
+(7, 1, 'login', 'User logged in successfully', '2025-01-27 12:40:14', '2025-01-27 12:40:14'),
+(8, 1, 'logout', 'User logged out', '2025-01-27 13:15:31', '2025-01-27 13:15:31'),
+(9, 1, 'login', 'User logged in successfully', '2025-01-27 13:19:55', '2025-01-27 13:19:55'),
+(10, 1, 'login', 'User logged in successfully', '2025-01-29 15:42:09', '2025-01-29 15:42:09'),
+(11, 1, 'create_student', 'Created student ID 3', '2025-01-29 16:26:49', '2025-01-29 16:26:49'),
+(12, 1, 'create_student', 'Created student ID 4', '2025-01-29 16:36:31', '2025-01-29 16:36:31'),
+(13, 1, 'login', 'User logged in successfully', '2025-01-31 22:39:34', '2025-01-31 22:39:34'),
+(14, 1, 'login', 'User logged in successfully', '2025-02-23 08:49:53', '2025-02-23 08:49:53'),
+(15, 1, 'login', 'User logged in successfully', '2025-02-23 10:14:36', '2025-02-23 10:14:36'),
+(16, 1, 'create_student', 'Created student ID 6', '2025-02-23 10:21:59', '2025-02-23 10:21:59'),
+(17, 1, 'login', 'User logged in successfully', '2025-04-06 09:33:16', '2025-04-06 09:33:16');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `courses`
+--
+
+CREATE TABLE `courses` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `courses`
+--
+
+INSERT INTO `courses` (`id`, `name`, `created_at`, `updated_at`) VALUES
+(1, 'BSIT', '2025-01-29 16:06:51', '2025-01-29 16:06:51'),
+(2, 'BSE', '2025-01-29 16:06:51', '2025-01-29 16:06:51'),
+(3, 'BSA', '2025-01-29 16:06:51', '2025-01-29 16:06:51'),
+(4, 'BSAB', '2025-01-29 16:06:51', '2025-01-29 16:06:51'),
+(5, 'BSCrim', '2025-01-29 16:06:51', '2025-01-29 16:06:51'),
+(6, 'BSLEA', '2025-01-29 16:06:51', '2025-01-29 16:06:51'),
+(7, 'BFAS', '2025-01-29 16:06:51', '2025-01-29 16:06:51');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `departments`
+--
+
+CREATE TABLE `departments` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `departments`
+--
+
+INSERT INTO `departments` (`id`, `name`, `created_at`, `updated_at`) VALUES
+(2, 'IICT', '2025-01-29 16:26:25', '2025-01-29 16:26:25'),
+(3, 'SAA', '2025-02-23 10:29:14', '2025-02-23 10:29:14');
 
 -- --------------------------------------------------------
 
@@ -124,10 +185,13 @@ CREATE TABLE `students` (
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`id`, `firstname`, `middlename`, `lastname`, `year`, `course`, `section`, `department`, `rfid`, `image`, `sex`, `created_at`, `updated_at`) VALUES
-(1, 'Franklin', 'M.', 'Salacup', 4, 'BSIT', '3', '1', '0003388020', 'uploads/678225656cb77_npyf2gsu.png', 'Male', '2025-01-11 08:01:41', '2025-01-11 08:01:41'),
-(2, 'Jobert', 'A.', 'Aguilar', 4, 'BSIT', 'BSIT 4ANS', 'IICT', '0003403864', 'uploads/678226514b67c_DJI_20241116093942_0139_D (3).png', 'Male', '2025-01-11 08:05:37', '2025-01-11 08:05:37'),
-(3, 'SHIELA', 'GANTE', 'Aguilar', 4, 'BSIT', 'BSIT 4ANS', 'IICT', '123456879', 'uploads/678c8dd28131d_dolly.jpg', 'Female', '2025-01-19 05:29:54', '2025-01-19 05:30:08');
+INSERT INTO `students` (`id`, `firstname`, `middlename`, `lastname`, `year`, `course_id`, `section`, `department_id`, `rfid`, `image`, `sex`, `created_at`, `updated_at`) VALUES
+(1, 'Franklin', 'M.', 'Salacup', 4, 1, '3', 1, '0003388020', 'uploads/678225656cb77_npyf2gsu.png', 'Male', '2025-01-29 16:25:00', '2025-01-29 16:25:00'),
+(2, 'Jobert', 'A.', 'Aguilar', 4, 1, 'BSIT 4ANS', 1, '0003403864', 'uploads/678226514b67c_DJI_20241116093942_0139_D (3).png', 'Male', '2025-01-29 16:25:00', '2025-01-29 16:25:00'),
+(3, 'Jobert', 'DELA CRUZ', 'Aguilar', 4, 1, '3', 2, '2342342', 'uploads/679a56c93a35e_474258935_586926977457044_1046888536965818386_n.jpg', 'Male', '2025-01-29 16:26:49', '2025-01-29 16:26:49'),
+(4, 'SHIELA', 'DELA CRUZ', 'GANTE', 4, 1, 'A NS', 2, '24123123', 'assets/img/default-avatar.png', 'Female', '2025-01-29 16:36:31', '2025-01-29 16:36:31'),
+(6, 'SHIELA', 'DELA CRUZ', 'GANTE', 2, 3, 'A NS', 2, '098765432', 'uploads/67baf6c78ce24_404385044_122105012270120244_4883291354320556715_n.jpg', 'Male', '2025-02-23 10:21:59', '2025-02-23 10:21:59'),
+(4294967295, 'Arisha', 'ashley', 'Abad', 2021, 0, 'BSIT NS (2021-2022) 4A', 0, '', NULL, 'Other', '2025-02-23 11:17:26', '2025-02-23 11:17:26');
 
 -- --------------------------------------------------------
 
@@ -204,6 +268,18 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- AUTO_INCREMENT for table `courses`
+--
+ALTER TABLE `courses`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `departments`
+--
+ALTER TABLE `departments`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
@@ -216,7 +292,7 @@ ALTER TABLE `logs`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4294967296;
 
 --
 -- AUTO_INCREMENT for table `users`
