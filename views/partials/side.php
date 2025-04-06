@@ -18,5 +18,8 @@
         <li>
             <a href="<?= BASE_PATH ?>/audit-logs"><i class="fas fa-file-alt"></i> Audit Logs</a>
         </li>
+        <li>
+            <a href="<?= BASE_PATH ?>/setup"><i class="fas fa-cog"></i> Setup</a>
+        </li>
     </ul>
 </nav>
