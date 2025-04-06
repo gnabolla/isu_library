@@ -30,7 +30,10 @@ $protected_routes = [
     "/audit-logs"       => "controllers/audit_logs.php",
     "/departments"      => "controllers/departments.php",
     "/courses"          => "controllers/courses.php",
-    "/import-students"  => "controllers/import_students.php"
+    "/import-students"  => "controllers/import_students.php",
+    "/import-students/sacarias" => "controllers/import_sacarias.php",
+    "/import-students/sarias"   => "controllers/import_sarias.php",
+    "/import-students/debug"    => "controllers/import_sacarias_debug.php"
 ];
 
 // Define public routes (no auth required)
