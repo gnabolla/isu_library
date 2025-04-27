@@ -1,6 +1,6 @@
 <!-- views/logs/index.view.php -->
 <div class="container mt-4">
-    <h2>RFID Logs</h2>
+    <h2>Student ID Logs</h2>
 
     <div class="card mb-4">
         <div class="card-body">
@@ -102,7 +102,7 @@
                         <tr>
                             <th>Date &amp; Time</th>
                             <th>Student Name</th>
-                            <th>RFID</th>
+                            <th>Student ID</th>
                             <th>Program</th>
                             <th>Department</th>
                             <th>Time In/Out</th>

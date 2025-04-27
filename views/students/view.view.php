@@ -4,7 +4,6 @@
 
     <div class="card">
         <div class="card-body">
-
             <?php
                 $imgPath = $student['image'];
                 if (!$imgPath || !file_exists($imgPath)) {
@@ -20,7 +19,7 @@
                     <td><?= htmlspecialchars($student['id']) ?></td>
                 </tr>
                 <tr>
-                    <th>RFID</th>
+                    <th>Student ID</th>
                     <td><?= htmlspecialchars($student['rfid']) ?></td>
                 </tr>
                 <tr>

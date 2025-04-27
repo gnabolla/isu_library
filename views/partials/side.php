@@ -10,10 +10,10 @@
             <a href="<?= BASE_PATH ?>/students"><i class="fas fa-user-graduate"></i> Students</a>
         </li>
         <li>
-            <a href="<?= BASE_PATH ?>/rfid"><i class="fas fa-qrcode"></i> RFID Scan</a>
+            <a href="<?= BASE_PATH ?>/rfid"><i class="fas fa-id-card"></i> Student ID Scan</a>
         </li>
         <li>
-            <a href="<?= BASE_PATH ?>/logs"><i class="fas fa-history"></i> RFID Logs</a>
+            <a href="<?= BASE_PATH ?>/logs"><i class="fas fa-history"></i> Login Logs</a>
         </li>
         <li>
             <a href="<?= BASE_PATH ?>/audit-logs"><i class="fas fa-file-alt"></i> Audit Logs</a>

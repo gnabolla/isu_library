@@ -47,7 +47,7 @@ switch ($action) {
             // Basic validation
             foreach (['firstname','middlename','lastname','rfid','sex'] as $req) {
                 if (empty($data[$req])) {
-                    $errors[] = ucfirst($req).' is required.';
+                    $errors[] = ($req === 'rfid' ? 'Student ID' : ucfirst($req)) . ' is required.';
                 }
             }
             if ($data['course_id'] <= 0) {

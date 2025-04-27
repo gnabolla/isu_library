@@ -81,7 +81,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="rfid" class="form-label">RFID</label>
+            <label for="rfid" class="form-label">Student ID</label>
             <input type="text" name="rfid" class="form-control" required
                    value="<?= htmlspecialchars($_POST['rfid'] ?? '') ?>">
         </div>

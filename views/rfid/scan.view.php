@@ -185,7 +185,7 @@
         <form id="rfid-form">
             <div class="form-group">
                 <input type="text" id="rfid" name="rfid" class="form-control"
-                       placeholder="Tap or Enter RFID Here" autofocus autocomplete="off" required>
+                       placeholder="Tap or Enter Student ID Here" autofocus autocomplete="off" required>
             </div>
             <button type="submit" class="btn-submit">Submit</button>
         </form>
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         const rfid = rfidInput.value.trim();
         if (!rfid) {
-            displayFeedback('RFID is required.', 'danger');
+            displayFeedback('Student ID is required.', 'danger');
             return;
         }
 

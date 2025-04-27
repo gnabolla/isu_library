@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rfid = trim($_POST['rfid'] ?? '');
 
     if (empty($rfid)) {
-        $response = ['status' => 'error', 'message' => 'RFID cannot be empty.'];
+        $response = ['status' => 'error', 'message' => 'Student ID cannot be empty.'];
         header('Content-Type: application/json');
         echo json_encode($response);
         exit();
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $student = $studentModel->getByRFID($rfid);
 
     if (!$student) {
-        $response = ['status' => 'error', 'message' => 'No student found with the provided RFID.'];
+        $response = ['status' => 'error', 'message' => 'No student found with the provided Student ID.'];
         header('Content-Type: application/json');
         echo json_encode($response);
         exit();
@@ -90,5 +90,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$title = 'RFID Scan Interface';
+$title = 'Student ID Scan Interface';
 require 'views/rfid/scan.view.php';

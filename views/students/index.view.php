@@ -7,7 +7,7 @@
         <input type="hidden" name="action" value="index">
         <div class="row g-3">
             <div class="col-md-3">
-                <input type="text" name="search" class="form-control" placeholder="Search name/RFID" 
+                <input type="text" name="search" class="form-control" placeholder="Search name/Student ID" 
                        value="<?= htmlspecialchars($search) ?>">
             </div>
             <div class="col-md-2">
@@ -51,7 +51,7 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>RFID</th>
+                <th>Student ID</th>
                 <th>First Name</th>
                 <th>Middle Name</th>
                 <th>Last Name</th>
